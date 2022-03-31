@@ -1,0 +1,187 @@
+{
+  "users": [
+    {
+      "id": 0,
+      "username": "user1",
+      "password": "pass1"
+    },
+    {
+      "id": 1,
+      "username": "user2",
+      "password": "pass2"
+    },
+    {
+      "id": 2,
+      "username": "user3",
+      "password": "pass3"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 0,
+      "userID": 0,
+      "name": "Supermarket",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Milk"
+        },
+        {
+          "id": 1,
+          "name": "Bread"
+        },
+        {
+          "id": 2,
+          "name": "Steaks"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "userID": 0,
+      "name": "Pickup Kids",
+      "subtasks": []
+    },
+    {
+      "id": 2,
+      "userID": 0,
+      "name": "Meetings",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Meeting 1"
+        },
+        {
+          "id": 1,
+          "name": "Meeting 2"
+        },
+        {
+          "id": 2,
+          "name": "Meeting 3"
+        },
+        {
+          "id": 3,
+          "name": "Meeting 4"
+        },
+        {
+          "id": 4,
+          "name": "Meeting 5"
+        },
+        {
+          "id": 5,
+          "name": "Meeting 6"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "userID": 0,
+      "name": "Stuff",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Stuff1"
+        },
+        {
+          "id": 1,
+          "name": "Stuff2"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "userID": 0,
+      "name": "TV Shows",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Show 1"
+        },
+        {
+          "id": 1,
+          "name": "Show 2"
+        },
+        {
+          "id": 2,
+          "name": "Show 3"
+        },
+        {
+          "id": 3,
+          "name": "Show 4"
+        },
+        {
+          "id": 4,
+          "name": "Show 5"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "userID": 0,
+      "name": "Task 5",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Task 5.1"
+        },
+        {
+          "id": 1,
+          "name": "Task 5.2"
+        },
+        {
+          "id": 2,
+          "name": "Task 5.3"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "userID": 0,
+      "name": "Task 6",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Task 6.1"
+        },
+        {
+          "id": 1,
+          "name": "Task 6.2"
+        },
+        {
+          "id": 2,
+          "name": "Task 6.3"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "userID": 1,
+      "name": "Gas Station",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Gas"
+        },
+        {
+          "id": 1,
+          "name": "Tire Pressure"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "userID": 1,
+      "name": "Task 2",
+      "subtasks": [
+        {
+          "id": 0,
+          "name": "Task 2.1"
+        },
+        {
+          "id": 1,
+          "name": "Task 2.2"
+        }
+      ]
+    }
+  ]
+}

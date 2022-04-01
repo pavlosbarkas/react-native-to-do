@@ -13,6 +13,17 @@ class Login extends Component {
     password: '',
   };
 
+  validateInputFields = () => {
+    if (this.state.username === '') {
+      alert('Please enter your username');
+      return false;
+    } else if (this.state.password === '') {
+      alert('Please enter your password');
+      return false;
+    }
+    return true;
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -39,14 +50,16 @@ class Login extends Component {
         <Pressable
           style={styles.loginButton}
           onPress={() => {
-            if (
-              UserServices.loginUser(this.state.username, this.state.password)
-            ) {
-              this.props.navigation.navigate('UserTasks', {
-                userID: UserServices.getUserID(this.state.username),
-              });
-            } else {
-              alert('Login Failed');
+            if (this.validateInputFields()) {
+              if (
+                UserServices.loginUser(this.state.username, this.state.password)
+              ) {
+                this.props.navigation.navigate('UserTasks', {
+                  userID: UserServices.getUserID(this.state.username),
+                });
+              } else {
+                alert('Login Failed');
+              }
             }
           }}>
           <Text style={styles.buttonText}>Login</Text>

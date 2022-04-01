@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
+import CustomSubtaskRow from '../components/CustomSubtaskRow';
 
 class SubTasks extends Component {
   constructor(props) {
@@ -24,44 +25,31 @@ class SubTasks extends Component {
     currentTaskID: null,
   };
 
+  //handler for flatlist child component
+  setSubtasksState = value => {
+    this.setState({subtasks: value});
+  };
+  setEditTaskDialogVisible = value => {
+    this.setState({editTaskDialogVisible: value});
+  };
+  setCurrentTaskIDState = value => {
+    this.setState({currentTaskID: value});
+  };
+  //handler for flatlist child component
+
   componentDidMount() {
     this.setState({
       subtasks: UserServices.getSubtasks(this.state.selectedTaskID),
     });
   }
 
-  newSubtaskName = '';
+  newSubtaskName = ''; //STO STATE
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
   addNewSubtask = () => {
-    let newSubtasks = this.state.subtasks.slice();
-    newSubtasks.push({name: this.newSubtaskName});
+    let newSubtasks = [...this.state.subtasks];
+    newSubtasks.push({name: this.newSubtaskName, id: newSubtasks.length + 1});
     this.setState({subtasks: newSubtasks});
-  };
-
-  showEditTaskDialog = id => {
-    this.setState({currentTaskID: id});
-    this.setState({editTaskDialogVisible: true});
-  };
-  hideEditTaskDialog = () => this.setState({editTaskDialogVisible: false});
-  renameTask = () => {
-    let tempTasks = this.state.subtasks;
-    tempTasks.forEach(task => {
-      if (task.id === this.state.currentTaskID) {
-        task.name = this.newSubtaskName;
-      }
-    });
-    this.setState({subtasks: tempTasks});
-  };
-
-  deleteTask = id => {
-    let tempTasks = this.state.subtasks;
-    tempTasks.forEach(task => {
-      if (task.id === id) {
-        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
-      }
-    });
-    this.setState({subtasks: tempTasks});
   };
 
   render() {
@@ -71,54 +59,17 @@ class SubTasks extends Component {
           <FlatList
             data={this.state.subtasks}
             keyExtractor={item => item.id}
-            renderItem={({item}) => (
-              <View style={styles.flatlistRow}>
-                <Text style={styles.taskName}>{item.name}</Text>
-                <View style={styles.buttons}>
-                  <TouchableOpacity
-                    style={styles.editTaskButton}
-                    onPress={() => {
-                      this.showEditTaskDialog(item.id);
-                    }}>
-                    <Text style={styles.buttonText}>Edit</Text>
-                  </TouchableOpacity>
-                  <Portal>
-                    <Dialog
-                      visible={this.state.editTaskDialogVisible}
-                      onDismiss={this.hideEditTaskDialog}>
-                      <Dialog.Title>Edit task</Dialog.Title>
-                      <Dialog.Content>
-                        <TextInput
-                          style={styles.dialogTextInput}
-                          placeholder="Enter new task name"
-                          defaultValue=""
-                          onChangeText={text => {
-                            this.newSubtaskName = text;
-                          }}
-                        />
-                      </Dialog.Content>
-                      <Dialog.Actions>
-                        <Pressable
-                          style={styles.dialogCreateTaskButton}
-                          onPress={() => {
-                            this.renameTask();
-                            this.hideEditTaskDialog();
-                          }}>
-                          <Text style={styles.dialogButtonText}>Confirm</Text>
-                        </Pressable>
-                      </Dialog.Actions>
-                    </Dialog>
-                  </Portal>
-                  <TouchableOpacity
-                    style={styles.editTaskButton}
-                    onPress={() => {
-                      this.deleteTask(item.id);
-                    }}>
-                    <Text style={styles.buttonText}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+            renderItem={({item}) => {
+              return (
+                <CustomSubtaskRow
+                  item={item}
+                  parentState={this.state}
+                  setSubtasksState={this.setSubtasksState}
+                  setEditTaskDialogVisible={this.setEditTaskDialogVisible}
+                  setCurrentTaskIDState={this.setCurrentTaskIDState}
+                />
+              );
+            }}
           />
         </View>
         <View style={styles.fabContainer}>

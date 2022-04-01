@@ -20,109 +20,48 @@ class UserTasks extends Component {
 
   state = {
     userTasks: [],
-    userID: this.props.route.params.userID,
+    userID: this.props.route.params.userID, //STO DIDMOUNT
     createTaskDialogVisible: false,
     editTaskDialogVisible: false,
     currentTaskID: null,
+    newTaskName: '',
   };
-
   componentDidMount() {
     this.setState({
       userTasks: UserServices.getUserTasks(this.state.userID),
     });
   }
 
-  newTaskName = '';
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
   addNewTask = () => {
-    let newUserTasks = this.state.userTasks.slice();
-    newUserTasks.push({name: this.newTaskName});
+    let newUserTasks = [...this.state.userTasks];
+    newUserTasks.push({
+      name: this.state.newTaskName,
+      id: this.state.userTasks.length + 3,
+    });
     this.setState({userTasks: newUserTasks});
   };
 
-  showEditTaskDialog = id => {
-    this.setState({currentTaskID: id});
-    this.setState({editTaskDialogVisible: true});
-  };
-  hideEditTaskDialog = () => this.setState({editTaskDialogVisible: false});
-  renameTask = () => {
-    let tempTasks = this.state.userTasks;
-    tempTasks.forEach(task => {
-      if (task.id === this.state.currentTaskID) {
-        task.name = this.newTaskName;
-      }
-    });
-    this.setState({userTasks: tempTasks});
+  deleteTask = id => {
+    let userTasks = this.state.userTasks.filter(task => task.id !== id);
+    this.setState({userTasks});
   };
 
-  deleteTask = id => {
-    let tempTasks = this.state.userTasks;
-    tempTasks.forEach(task => {
-      if (task.id === id) {
-        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
-      }
-    });
-    this.setState({userTasks: tempTasks});
+  renameTask = task => {
+    const userTasks = [...this.state.userTasks];
+    let newTask = userTasks.find(item => item.id === task.id);
+    newTask.name = task.name;
+    this.setState({userTasks});
   };
 
   renderItem = ({item}) => {
     return (
-      <View style={styles.flatlistRow}>
-        <Text style={styles.taskName}>{item.name}</Text>
-        <View style={styles.buttons}>
-          <TouchableOpacity
-            style={styles.editTaskButton}
-            onPress={() => {
-              this.showEditTaskDialog(item.id);
-            }}>
-            <Text style={styles.buttonText}>Edit</Text>
-          </TouchableOpacity>
-          <Portal>
-            <Dialog
-              visible={this.state.editTaskDialogVisible}
-              onDismiss={this.hideEditTaskDialog}>
-              <Dialog.Title>Edit task</Dialog.Title>
-              <Dialog.Content>
-                <TextInput
-                  style={styles.dialogTextInput}
-                  placeholder="Enter new task name"
-                  defaultValue=""
-                  onChangeText={text => {
-                    this.newTaskName = text;
-                  }}
-                />
-              </Dialog.Content>
-              <Dialog.Actions>
-                <Pressable
-                  style={styles.dialogCreateTaskButton}
-                  onPress={() => {
-                    this.renameTask();
-                    this.hideEditTaskDialog();
-                  }}>
-                  <Text style={styles.dialogButtonText}>Confirm</Text>
-                </Pressable>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-          <TouchableOpacity
-            style={styles.editTaskButton}
-            onPress={() => {
-              this.deleteTask(item.id);
-            }}>
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.showSubtasksButton}
-            onPress={() => {
-              this.props.navigation.navigate('Subtasks', {
-                taskID: item.id,
-              });
-            }}>
-            <Text style={styles.buttonText}>Subtasks</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <CustomTaskRow
+        item={item}
+        deleteTask={this.deleteTask}
+        renameTask={this.renameTask}
+      />
     );
   };
 
@@ -153,7 +92,7 @@ class UserTasks extends Component {
                   placeholder="Enter task name"
                   defaultValue=""
                   onChangeText={text => {
-                    this.newTaskName = text;
+                    this.setState({newTaskName: text});
                   }}
                 />
               </Dialog.Content>

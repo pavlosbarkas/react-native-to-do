@@ -11,6 +11,7 @@ import {
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
+import CustomTaskRow from '../components/CustomTaskRow';
 
 class UserTasks extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class UserTasks extends Component {
     userID: this.props.route.params.userID,
     createTaskDialogVisible: false,
     editTaskDialogVisible: false,
+    currentTaskID: null,
   };
 
   componentDidMount() {
@@ -30,6 +32,40 @@ class UserTasks extends Component {
     });
   }
 
+  newTaskName = '';
+  showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
+  hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+  addNewTask = () => {
+    let newUserTasks = this.state.userTasks.slice();
+    newUserTasks.push({name: this.newTaskName});
+    this.setState({userTasks: newUserTasks});
+  };
+
+  showEditTaskDialog = id => {
+    this.setState({currentTaskID: id});
+    this.setState({editTaskDialogVisible: true});
+  };
+  hideEditTaskDialog = () => this.setState({editTaskDialogVisible: false});
+  renameTask = () => {
+    let tempTasks = this.state.userTasks;
+    tempTasks.forEach(task => {
+      if (task.id === this.state.currentTaskID) {
+        task.name = this.newTaskName;
+      }
+    });
+    this.setState({userTasks: tempTasks});
+  };
+
+  deleteTask = id => {
+    let tempTasks = this.state.userTasks;
+    tempTasks.forEach(task => {
+      if (task.id === id) {
+        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
+      }
+    });
+    this.setState({userTasks: tempTasks});
+  };
+
   renderItem = ({item}) => {
     return (
       <View style={styles.flatlistRow}>
@@ -37,7 +73,9 @@ class UserTasks extends Component {
         <View style={styles.buttons}>
           <TouchableOpacity
             style={styles.editTaskButton}
-            onPress={this.showEditTaskDialog}>
+            onPress={() => {
+              this.showEditTaskDialog(item.id);
+            }}>
             <Text style={styles.buttonText}>Edit</Text>
           </TouchableOpacity>
           <Portal>
@@ -59,7 +97,7 @@ class UserTasks extends Component {
                 <Pressable
                   style={styles.dialogCreateTaskButton}
                   onPress={() => {
-                    this.renameTask(item.id);
+                    this.renameTask();
                     this.hideEditTaskDialog();
                   }}>
                   <Text style={styles.dialogButtonText}>Confirm</Text>
@@ -86,35 +124,6 @@ class UserTasks extends Component {
         </View>
       </View>
     );
-  };
-
-  newTaskName = '';
-  showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
-  hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
-  addNewTask = () => {
-    let newUserTasks = this.state.userTasks.slice();
-    newUserTasks.push({name: this.newTaskName});
-    this.setState({userTasks: newUserTasks});
-  };
-
-  showEditTaskDialog = () => this.setState({editTaskDialogVisible: true});
-  hideEditTaskDialog = () => this.setState({editTaskDialogVisible: false});
-  renameTask = id => {
-    this.state.userTasks.forEach(task => {
-      if (task.id === id) {
-        task.name = this.newTaskName;
-      }
-    });
-  };
-
-  deleteTask = id => {
-    let tempTasks = this.state.userTasks;
-    tempTasks.forEach(task => {
-      if (task.id === id) {
-        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
-      }
-    });
-    this.setState({userTasks: tempTasks});
   };
 
   render() {

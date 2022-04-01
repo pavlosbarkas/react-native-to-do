@@ -46,7 +46,7 @@ class Login extends Component {
                 userID: UserServices.getUserID(this.state.username),
               });
             } else {
-              alert('Failure Login');
+              alert('Login Failed');
             }
           }}>
           <Text style={styles.buttonText}>Login</Text>

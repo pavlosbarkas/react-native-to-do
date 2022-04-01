@@ -1,7 +1,16 @@
 import React, {Component} from 'react';
-import {Button, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Button,
+  FlatList,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
+import {FAB, Portal, Dialog} from 'react-native-paper';
 
 class UserTasks extends Component {
   constructor(props) {
@@ -11,6 +20,8 @@ class UserTasks extends Component {
   state = {
     userTasks: [],
     userID: this.props.route.params.userID,
+    createTaskDialogVisible: false,
+    editTaskDialogVisible: false,
   };
 
   componentDidMount() {
@@ -21,35 +32,139 @@ class UserTasks extends Component {
 
   renderItem = ({item}) => {
     return (
-      <Item
-        item={item}
-        onPress={() => {
-          this.props.navigation.navigate('Subtasks', {
-            taskID: item.id,
-          });
-        }}
-      />
+      <View style={styles.flatlistRow}>
+        <Text style={styles.taskName}>{item.name}</Text>
+        <View style={styles.buttons}>
+          <TouchableOpacity
+            style={styles.editTaskButton}
+            onPress={this.showEditTaskDialog}>
+            <Text style={styles.buttonText}>Edit</Text>
+          </TouchableOpacity>
+          <Portal>
+            <Dialog
+              visible={this.state.editTaskDialogVisible}
+              onDismiss={this.hideEditTaskDialog}>
+              <Dialog.Title>Edit task</Dialog.Title>
+              <Dialog.Content>
+                <TextInput
+                  style={styles.dialogTextInput}
+                  placeholder="Enter new task name"
+                  defaultValue=""
+                  onChangeText={text => {
+                    this.newTaskName = text;
+                  }}
+                />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Pressable
+                  style={styles.dialogCreateTaskButton}
+                  onPress={() => {
+                    this.renameTask(item.id);
+                    this.hideEditTaskDialog();
+                  }}>
+                  <Text style={styles.dialogButtonText}>Confirm</Text>
+                </Pressable>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+          <TouchableOpacity
+            style={styles.editTaskButton}
+            onPress={() => {
+              this.deleteTask(item.id);
+            }}>
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.showSubtasksButton}
+            onPress={() => {
+              this.props.navigation.navigate('Subtasks', {
+                taskID: item.id,
+              });
+            }}>
+            <Text style={styles.buttonText}>Subtasks</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
+  };
+
+  newTaskName = '';
+  showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
+  hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+  addNewTask = () => {
+    let newUserTasks = this.state.userTasks.slice();
+    newUserTasks.push({name: this.newTaskName});
+    this.setState({userTasks: newUserTasks});
+  };
+
+  showEditTaskDialog = () => this.setState({editTaskDialogVisible: true});
+  hideEditTaskDialog = () => this.setState({editTaskDialogVisible: false});
+  renameTask = id => {
+    this.state.userTasks.forEach(task => {
+      if (task.id === id) {
+        task.name = this.newTaskName;
+      }
+    });
+  };
+
+  deleteTask = id => {
+    let tempTasks = this.state.userTasks;
+    tempTasks.forEach(task => {
+      if (task.id === id) {
+        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
+      }
+    });
+    this.setState({userTasks: tempTasks});
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <FlatList
-          data={this.state.userTasks}
-          keyExtractor={item => item.id}
-          renderItem={this.renderItem}
-        />
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            data={this.state.userTasks}
+            keyExtractor={item => item.id}
+            renderItem={this.renderItem}
+          />
+        </View>
+        <View style={styles.fabContainer}>
+          <FAB
+            style={styles.floatingButton}
+            icon="plus"
+            onPress={this.showCreateTaskDialog}
+          />
+          <Portal>
+            <Dialog
+              visible={this.state.createTaskDialogVisible}
+              onDismiss={this.hideCreateTaskDialog}>
+              <Dialog.Title>Create a new task</Dialog.Title>
+              <Dialog.Content>
+                <TextInput
+                  style={styles.dialogTextInput}
+                  placeholder="Enter task name"
+                  defaultValue=""
+                  onChangeText={text => {
+                    this.newTaskName = text;
+                  }}
+                />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Pressable
+                  style={styles.dialogCreateTaskButton}
+                  onPress={() => {
+                    this.addNewTask();
+                    this.hideCreateTaskDialog();
+                  }}>
+                  <Text style={styles.dialogButtonText}>Create</Text>
+                </Pressable>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        </View>
       </View>
     );
   }
 }
-
-const Item = ({item, onPress}) => (
-  <TouchableOpacity onPress={onPress} style={styles.row}>
-    <Text style={styles.taskName}>{item.name}</Text>
-  </TouchableOpacity>
-);
 
 export default UserTasks;
 
@@ -59,7 +174,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#192734',
   },
-  row: {
+  flatlistContainer: {
+    flex: 8,
+    borderTopWidth: 7,
+    borderTopColor: '#324e68',
+    borderBottomWidth: 7,
+    borderBottomColor: '#324e68',
+  },
+  flatlistRow: {
+    flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
     borderBottomRightRadius: 18,
@@ -72,4 +195,39 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '500',
   },
+  fabContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  floatingButton: {
+    alignSelf: 'center',
+    backgroundColor: '#4b759c',
+  },
+  dialogTextInput: {
+    borderWidth: 2,
+  },
+  dialogCreateTaskButton: {
+    backgroundColor: 'cyan',
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 8,
+    padding: 7,
+  },
+  dialogButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 16,
+    lineHeight: 40,
+    padding: 10,
+    color: 'white',
+    fontWeight: '400',
+  },
+  editTaskButton: {},
+  showSubtasksButton: {},
 });

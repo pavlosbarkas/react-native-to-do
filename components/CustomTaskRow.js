@@ -5,29 +5,28 @@ import {Dialog, Portal} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 
 const CustomTaskRow = ({item, renameTask, deleteTask}) => {
-  let newTaskName = '';
-  let [currentTask, setCurrentTask] = useState(item);
-  let [visible, setVisible] = useState(false);
+  let [dialogVisible, setDialogVisible] = useState(false);
   const navigation = useNavigation();
   let [taskName, setTaskName] = useState(item.name);
-
-  const hideEditTaskDialog = () => {
-    setVisible(false);
-  };
 
   return (
     <View style={styles.flatlistRow}>
       <Text style={styles.taskName}>{item.name}</Text>
       <View style={styles.buttons}>
+        {/*#region Edit Button*/}
         <TouchableOpacity
           style={styles.editTaskButton}
           onPress={() => {
-            setVisible(true);
+            setDialogVisible(true);
           }}>
           <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity>
+        {/*#endregion*/}
+        {/*#region Edit Task Name Dialog*/}
         <Portal>
-          <Dialog visible={visible} onDismiss={hideEditTaskDialog}>
+          <Dialog
+            visible={dialogVisible}
+            onDismiss={() => setDialogVisible(false)}>
             <Dialog.Title>Edit task</Dialog.Title>
             <Dialog.Content>
               <TextInput
@@ -45,13 +44,15 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
                 style={styles.dialogCreateTaskButton}
                 onPress={() => {
                   renameTask({id: item.id, name: taskName});
-                  hideEditTaskDialog();
+                  setDialogVisible(false);
                 }}>
                 <Text style={styles.dialogButtonText}>Confirm</Text>
               </Pressable>
             </Dialog.Actions>
           </Dialog>
         </Portal>
+        {/*#endregion*/}
+        {/*#region Delete Button*/}
         <TouchableOpacity
           style={styles.editTaskButton}
           onPress={() => {
@@ -59,6 +60,8 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
           }}>
           <Text style={styles.buttonText}>Delete</Text>
         </TouchableOpacity>
+        {/*#endregion*/}
+        {/*#region Subtasks Button*/}
         <TouchableOpacity
           style={styles.showSubtasksButton}
           onPress={() => {
@@ -68,6 +71,7 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
           }}>
           <Text style={styles.buttonText}>Subtasks</Text>
         </TouchableOpacity>
+        {/*#endregion*/}
       </View>
     </View>
   );

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import * as UserServices from '../services/UserServices';
@@ -19,37 +18,53 @@ class SubTasks extends Component {
 
   state = {
     subtasks: [],
-    selectedTaskID: this.props.route.params.taskID,
     createTaskDialogVisible: false,
     editTaskDialogVisible: false,
     currentTaskID: null,
+    newSubtaskName: '',
   };
 
-  //handler for flatlist child component
-  setSubtasksState = value => {
-    this.setState({subtasks: value});
-  };
-  setEditTaskDialogVisible = value => {
-    this.setState({editTaskDialogVisible: value});
-  };
-  setCurrentTaskIDState = value => {
-    this.setState({currentTaskID: value});
-  };
-  //handler for flatlist child component
+  // //handler for flatlist child component
+  // setSubtasksState = value => {
+  //   this.setState({subtasks: value});
+  // };
+  // setEditTaskDialogVisible = value => {
+  //   this.setState({editTaskDialogVisible: value});
+  // };
+  // setCurrentTaskIDState = value => {
+  //   this.setState({currentTaskID: value});
+  // };
+  // //handler for flatlist child component
 
   componentDidMount() {
     this.setState({
-      subtasks: UserServices.getSubtasks(this.state.selectedTaskID),
+      subtasks: UserServices.getSubtasks(this.props.route.params.taskID),
     });
   }
 
-  newSubtaskName = ''; //STO STATE
+  //helper functions to show or hide the dialog to create a task
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+
   addNewSubtask = () => {
     let newSubtasks = [...this.state.subtasks];
-    newSubtasks.push({name: this.newSubtaskName, id: newSubtasks.length + 1});
+    newSubtasks.push({
+      name: this.state.newSubtaskName,
+      id: newSubtasks.length + 2,
+    });
     this.setState({subtasks: newSubtasks});
+  };
+
+  deleteSubTask = id => {
+    let subtasks = this.state.subtasks.filter(task => task.id !== id);
+    this.setState({subtasks});
+  };
+
+  renameSubTask = task => {
+    const subtasks = [...this.state.subtasks];
+    let newTask = subtasks.find(item => item.id === task.id);
+    newTask.name = task.name;
+    this.setState({subtasks});
   };
 
   render() {
@@ -63,10 +78,8 @@ class SubTasks extends Component {
               return (
                 <CustomSubtaskRow
                   item={item}
-                  parentState={this.state}
-                  setSubtasksState={this.setSubtasksState}
-                  setEditTaskDialogVisible={this.setEditTaskDialogVisible}
-                  setCurrentTaskIDState={this.setCurrentTaskIDState}
+                  deleteSubTask={this.deleteSubTask}
+                  renameSubTask={this.renameSubTask}
                 />
               );
             }}
@@ -78,6 +91,7 @@ class SubTasks extends Component {
             icon="plus"
             onPress={this.showCreateTaskDialog}
           />
+          {/*#region Create SubTask Dialog*/}
           <Portal>
             <Dialog
               visible={this.state.createTaskDialogVisible}
@@ -89,7 +103,7 @@ class SubTasks extends Component {
                   placeholder="Enter subtask name"
                   defaultValue=""
                   onChangeText={text => {
-                    this.newSubtaskName = text;
+                    this.setState({newSubtaskName: text});
                   }}
                 />
               </Dialog.Content>
@@ -105,6 +119,7 @@ class SubTasks extends Component {
               </Dialog.Actions>
             </Dialog>
           </Portal>
+          {/*#endregion*/}
         </View>
       </View>
     );

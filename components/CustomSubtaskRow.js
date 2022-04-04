@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -9,16 +9,11 @@ import {
 } from 'react-native';
 import {Dialog, Portal} from 'react-native-paper';
 
-const CustomSubtaskRow = ({
-  item,
-  parentState,
-  setSubtasksState,
-  setEditTaskDialogVisible,
-  setCurrentTaskIDState,
-}) => {
-  let newSubtaskName = '';
+const CustomSubtaskRow = ({item, renameSubTask, deleteSubTask}) => {
+  let [dialogVisible, setDialogVisible] = useState(false);
+  let [subTaskName, setSubTaskName] = useState(item.name);
 
-  const showEditTaskDialog = id => {
+  /*const showEditTaskDialog = id => {
     setCurrentTaskIDState(id);
     setEditTaskDialogVisible(true);
   };
@@ -43,23 +38,26 @@ const CustomSubtaskRow = ({
       }
     });
     setSubtasksState(tempTasks);
-  };
+  };*/
 
   return (
     <View style={styles.flatlistRow}>
       <Text style={styles.taskName}>{item.name}</Text>
       <View style={styles.buttons}>
+        {/*#region Edit Button*/}
         <TouchableOpacity
           style={styles.editTaskButton}
           onPress={() => {
-            showEditTaskDialog(item.id);
+            setDialogVisible(true);
           }}>
           <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity>
+        {/*#endregion*/}
+        {/*#region Edit SubTask Name Dialog*/}
         <Portal>
           <Dialog
-            visible={parentState.editTaskDialogVisible}
-            onDismiss={hideEditTaskDialog}>
+            visible={dialogVisible}
+            onDismiss={() => setDialogVisible(false)}>
             <Dialog.Title>Edit task</Dialog.Title>
             <Dialog.Content>
               <TextInput
@@ -67,29 +65,33 @@ const CustomSubtaskRow = ({
                 placeholder="Enter new task name"
                 defaultValue=""
                 onChangeText={text => {
-                  newSubtaskName = text;
+                  setSubTaskName(text);
                 }}
+                value={subTaskName}
               />
             </Dialog.Content>
             <Dialog.Actions>
               <Pressable
                 style={styles.dialogCreateTaskButton}
                 onPress={() => {
-                  renameTask();
-                  hideEditTaskDialog();
+                  renameSubTask({id: item.id, name: subTaskName});
+                  setDialogVisible(false);
                 }}>
                 <Text style={styles.dialogButtonText}>Confirm</Text>
               </Pressable>
             </Dialog.Actions>
           </Dialog>
         </Portal>
+        {/*#endregion*/}
+        {/*#region Delete Button*/}
         <TouchableOpacity
           style={styles.editTaskButton}
           onPress={() => {
-            deleteTask(item.id);
+            deleteSubTask(item.id);
           }}>
           <Text style={styles.buttonText}>Delete</Text>
         </TouchableOpacity>
+        {/*#endregion*/}
       </View>
     </View>
   );
@@ -116,8 +118,11 @@ const styles = StyleSheet.create({
     borderBottomColor: 'lightgrey',
     borderBottomRightRadius: 18,
     borderBottomLeftRadius: 18,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   taskName: {
+    flex: 1,
     fontSize: 24,
     lineHeight: 40,
     padding: 20,

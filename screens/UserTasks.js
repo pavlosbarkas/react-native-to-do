@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  Button,
-  FlatList,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
@@ -20,25 +12,25 @@ class UserTasks extends Component {
 
   state = {
     userTasks: [],
-    userID: this.props.route.params.userID, //STO DIDMOUNT
     createTaskDialogVisible: false,
-    editTaskDialogVisible: false,
-    currentTaskID: null,
     newTaskName: '',
   };
+
   componentDidMount() {
     this.setState({
-      userTasks: UserServices.getUserTasks(this.state.userID),
+      userTasks: UserServices.getUserTasks(this.props.route.params.userID),
     });
   }
 
+  //helper functions to show or hide the dialog to create a task
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+
   addNewTask = () => {
     let newUserTasks = [...this.state.userTasks];
     newUserTasks.push({
       name: this.state.newTaskName,
-      id: this.state.userTasks.length + 3,
+      id: this.state.userTasks.length + 2,
     });
     this.setState({userTasks: newUserTasks});
   };
@@ -55,16 +47,6 @@ class UserTasks extends Component {
     this.setState({userTasks});
   };
 
-  renderItem = ({item}) => {
-    return (
-      <CustomTaskRow
-        item={item}
-        deleteTask={this.deleteTask}
-        renameTask={this.renameTask}
-      />
-    );
-  };
-
   render() {
     return (
       <View style={styles.container}>
@@ -72,7 +54,15 @@ class UserTasks extends Component {
           <FlatList
             data={this.state.userTasks}
             keyExtractor={item => item.id}
-            renderItem={this.renderItem}
+            renderItem={({item}) => {
+              return (
+                <CustomTaskRow
+                  item={item}
+                  deleteTask={this.deleteTask}
+                  renameTask={this.renameTask}
+                />
+              );
+            }}
           />
         </View>
         <View style={styles.fabContainer}>
@@ -81,6 +71,7 @@ class UserTasks extends Component {
             icon="plus"
             onPress={this.showCreateTaskDialog}
           />
+          {/*#region Create Task Dialog*/}
           <Portal>
             <Dialog
               visible={this.state.createTaskDialogVisible}
@@ -108,6 +99,7 @@ class UserTasks extends Component {
               </Dialog.Actions>
             </Dialog>
           </Portal>
+          {/*#endregion*/}
         </View>
       </View>
     );

@@ -1,3 +1,4 @@
+//#region imports
 import React, {Component} from 'react';
 import {FlatList, Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
@@ -7,7 +8,7 @@ import CustomTaskRow from '../components/CustomTaskRow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropShadow from 'react-native-drop-shadow';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+//#endregion
 
 class UserTasks extends Component {
   constructor(props) {
@@ -26,10 +27,12 @@ class UserTasks extends Component {
     });
   }
 
-  //helper functions to show or hide the dialog to create a task
+  //#region helper functions to show or hide the dialog to create a task
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+  //#endregion
 
+  //#region add, delete and rename task functions triggered on buttons press
   addNewTask = () => {
     let newUserTasks = [...this.state.userTasks];
     newUserTasks.push({
@@ -50,10 +53,12 @@ class UserTasks extends Component {
     newTask.name = task.name;
     this.setState({userTasks});
   };
+  //#endregion
 
   render() {
     return (
       <View style={styles.container}>
+        {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList
             data={this.state.userTasks}
@@ -69,21 +74,19 @@ class UserTasks extends Component {
             }}
           />
         </View>
+        {/*#endregion*/}
+        {/*#region add task button container*/}
         <View style={styles.addTaskButtonContainer}>
           <DropShadow style={styles.addTaskButtonDropShadow}>
             <Pressable
               style={({pressed}) => [
                 styles.addTaskButton,
                 {
-                  backgroundColor: pressed ? '#7b96ae' : '#43698c',
+                  borderColor: pressed ? '#7b96ae' : '#43698c',
                 },
               ]}
               onPress={this.showCreateTaskDialog}>
-              <MaterialCommunityIcons
-                name="plus-thick"
-                size={30}
-                color="white"
-              />
+              <MaterialCommunityIcons name="plus" size={30} color="#e8eaeb" />
             </Pressable>
           </DropShadow>
           {/*#region Create Task Dialog*/}
@@ -99,7 +102,7 @@ class UserTasks extends Component {
                 <TextInput
                   style={styles.dialogTextInput}
                   placeholder="Enter task name"
-                  placeholderTextColor="white"
+                  placeholderTextColor="#e8eaeb"
                   defaultValue=""
                   onChangeText={text => {
                     this.setState({newTaskName: text});
@@ -108,17 +111,28 @@ class UserTasks extends Component {
               </Dialog.Content>
               <Dialog.Actions>
                 <Pressable
+                  style={({pressed}) => [
+                    styles.dialogButton,
+                    {
+                      borderColor: pressed ? '#7b96ae' : '#43698c',
+                    },
+                  ]}
                   onPress={() => {
                     this.addNewTask();
                     this.hideCreateTaskDialog();
                   }}>
-                  <MaterialIcons name="add-circle" size={45} color="white" />
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={30}
+                    color="#e8eaeb"
+                  />
                 </Pressable>
               </Dialog.Actions>
             </Dialog>
           </Portal>
           {/*#endregion*/}
         </View>
+        {/*#endregion*/}
       </View>
     );
   }
@@ -126,6 +140,7 @@ class UserTasks extends Component {
 
 export default UserTasks;
 
+//#region styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,10 +149,11 @@ const styles = StyleSheet.create({
   },
   flatlistContainer: {
     height: appHeight * 0.9,
-    borderTopWidth: appHeight * 0.006,
-    borderTopColor: '#324e68',
-    borderBottomWidth: appHeight * 0.006,
-    borderBottomColor: '#324e68',
+    borderTopWidth: appHeight * 0.003,
+    borderTopColor: '#43698c',
+    borderBottomWidth: appHeight * 0.003,
+    borderBottomColor: '#43698c',
+    paddingBottom: appHeight * 0.005,
   },
   addTaskButtonContainer: {
     height: appHeight * 0.1,
@@ -145,8 +161,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addTaskButton: {
-    padding: appWidth * 0.02,
+    padding: appWidth * 0.018,
     borderRadius: 35,
+    borderWidth: 3,
   },
   addTaskButtonDropShadow: {
     shadowOpacity: 1,
@@ -162,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dialogTitle: {
-    color: 'white',
+    color: '#e8eaeb',
     alignSelf: 'center',
     fontSize: appWidth * 0.04,
     fontWeight: 'bold',
@@ -172,8 +189,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     borderColor: 'lightgrey',
-    color: 'white',
+    color: '#e8eaeb',
     width: appWidth * 0.5,
-    padding: appHeight * 0.01,
+    padding: appHeight * 0.02,
+  },
+  dialogButton: {
+    borderRadius: 30,
+    borderWidth: 4,
+    padding: appWidth * 0.01,
   },
 });
+//#endregion

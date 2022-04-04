@@ -1,3 +1,4 @@
+//#region imports
 import React, {useState} from 'react';
 import {Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
@@ -7,6 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import DropShadow from 'react-native-drop-shadow';
+//#endregion
 
 const CustomTaskRow = ({item, renameTask, deleteTask}) => {
   let [dialogVisible, setDialogVisible] = useState(false);
@@ -19,11 +21,16 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
       <View style={styles.buttonsContainer}>
         {/*#region Edit Button*/}
         <Pressable
-          style={styles.editButton}
+          style={({pressed}) => [
+            styles.editButton,
+            {
+              borderColor: pressed ? '#7b96ae' : '#43698c',
+            },
+          ]}
           onPress={() => {
             setDialogVisible(true);
           }}>
-          <MaterialIcons name="edit" size={25} color="white" />
+          <MaterialIcons name="edit" size={22} color="#e8eaeb" />
         </Pressable>
         {/*#endregion*/}
         {/*#region Edit Task Name Dialog*/}
@@ -37,7 +44,7 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
               <TextInput
                 style={styles.dialogTextInput}
                 placeholder="Enter new task name"
-                placeholderTextColor="white"
+                placeholderTextColor="#e8eaeb"
                 defaultValue=""
                 onChangeText={text => {
                   setTaskName(text);
@@ -48,11 +55,17 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
             <Dialog.Actions>
               <DropShadow style={styles.confirmEditButtonDropShadow}>
                 <Pressable
+                  style={({pressed}) => [
+                    styles.dialogButton,
+                    {
+                      borderColor: pressed ? '#7b96ae' : '#43698c',
+                    },
+                  ]}
                   onPress={() => {
                     renameTask({id: item.id, name: taskName});
                     setDialogVisible(false);
                   }}>
-                  <FontAwesome5 name="check-circle" size={40} color="white" />
+                  <FontAwesome5 name="check" size={20} color="#e8eaeb" />
                 </Pressable>
               </DropShadow>
             </Dialog.Actions>
@@ -61,22 +74,36 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
         {/*#endregion*/}
         {/*#region Delete Button*/}
         <Pressable
-          style={styles.deleteButton}
+          style={({pressed}) => [
+            styles.deleteButton,
+            {
+              borderColor: pressed ? '#7b96ae' : '#43698c',
+            },
+          ]}
           onPress={() => {
             deleteTask(item.id);
           }}>
-          <MaterialIcons name="delete" size={28} color="white" />
+          <MaterialIcons name="delete" size={22} color="#e8eaeb" />
         </Pressable>
         {/*#endregion*/}
         {/*#region Subtasks Button*/}
         <Pressable
-          style={styles.showSubtasksButton}
+          style={({pressed}) => [
+            styles.showSubtasksButton,
+            {
+              borderColor: pressed ? '#7b96ae' : '#43698c',
+            },
+          ]}
           onPress={() => {
             navigation.navigate('Subtasks', {
               taskID: item.id,
             });
           }}>
-          <MaterialIcons name="keyboard-arrow-right" size={35} color="white" />
+          <MaterialIcons
+            name="keyboard-arrow-right"
+            size={22}
+            color="#e8eaeb"
+          />
         </Pressable>
         {/*#endregion*/}
       </View>
@@ -86,18 +113,22 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
 
 export default CustomTaskRow;
 
+//#region styles
 const styles = StyleSheet.create({
   flatlistRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'lightgrey',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8eaeb',
+    borderBottomRightRadius: appWidth * 0.05,
+    borderBottomLeftRadius: appWidth * 0.05,
+    height: appHeight * 0.13,
   },
   taskName: {
     width: appWidth * 0.6,
-    fontSize: appWidth * 0.05,
+    fontSize: appWidth * 0.052,
     lineHeight: appHeight * 0.07,
     padding: appHeight * 0.028,
-    color: 'white',
+    color: '#e8eaeb',
     fontWeight: '500',
   },
   buttonsContainer: {
@@ -108,16 +139,22 @@ const styles = StyleSheet.create({
   },
   editButton: {
     marginLeft: appWidth * 0.05,
-    marginRight: appWidth * 0.04,
-    padding: appWidth * 0.01,
+    marginRight: appWidth * 0.02,
+    padding: appWidth * 0.015,
+    borderWidth: 3,
+    borderRadius: 10,
   },
   deleteButton: {
     marginRight: appWidth * 0.02,
-    padding: appWidth * 0.01,
+    padding: appWidth * 0.015,
+    borderWidth: 3,
+    borderRadius: 10,
   },
   showSubtasksButton: {
-    marginRight: appWidth * 0.02,
-    padding: appWidth * 0.01,
+    marginRight: appWidth * 0.05,
+    padding: appWidth * 0.015,
+    borderWidth: 3,
+    borderRadius: 10,
   },
   dialogContainer: {
     backgroundColor: '#192734',
@@ -128,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dialogTitle: {
-    color: 'white',
+    color: '#e8eaeb',
     alignSelf: 'center',
     fontSize: appWidth * 0.04,
     fontWeight: 'bold',
@@ -137,7 +174,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     borderColor: 'lightgrey',
-    color: 'white',
+    color: '#e8eaeb',
     width: appWidth * 0.5,
     padding: appHeight * 0.02,
   },
@@ -146,8 +183,14 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     shadowColor: '#6887a3',
     shadowOffset: {
-      height: 2,
-      width: 2,
+      height: 1,
+      width: 1,
     },
   },
+  dialogButton: {
+    borderRadius: 30,
+    borderWidth: 3,
+    padding: appWidth * 0.02,
+  },
 });
+//#endregion

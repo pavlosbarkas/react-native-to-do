@@ -1,3 +1,4 @@
+//#region imports
 import React, {Component} from 'react';
 import {
   FlatList,
@@ -13,7 +14,7 @@ import CustomSubtaskRow from '../components/CustomSubtaskRow';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropShadow from 'react-native-drop-shadow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+//#endregion
 
 class SubTasks extends Component {
   constructor(props) {
@@ -28,28 +29,18 @@ class SubTasks extends Component {
     newSubtaskName: '',
   };
 
-  // //handler for flatlist child component
-  // setSubtasksState = value => {
-  //   this.setState({subtasks: value});
-  // };
-  // setEditTaskDialogVisible = value => {
-  //   this.setState({editTaskDialogVisible: value});
-  // };
-  // setCurrentTaskIDState = value => {
-  //   this.setState({currentTaskID: value});
-  // };
-  // //handler for flatlist child component
-
   componentDidMount() {
     this.setState({
       subtasks: UserServices.getSubtasks(this.props.route.params.taskID),
     });
   }
 
-  //helper functions to show or hide the dialog to create a task
+  //#region helper functions to show or hide the dialog to create a task
   showCreateTaskDialog = () => this.setState({createTaskDialogVisible: true});
   hideCreateTaskDialog = () => this.setState({createTaskDialogVisible: false});
+  //#endregion
 
+  //#region add, delete and rename subtask functions triggered on buttons press
   addNewSubtask = () => {
     let newSubtasks = [...this.state.subtasks];
     newSubtasks.push({
@@ -70,10 +61,12 @@ class SubTasks extends Component {
     newTask.name = task.name;
     this.setState({subtasks});
   };
+  //#endregion
 
   render() {
     return (
       <View style={styles.container}>
+        {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList
             data={this.state.subtasks}
@@ -89,21 +82,19 @@ class SubTasks extends Component {
             }}
           />
         </View>
+        {/*endregion*/}
+        {/*#region add subtask button container*/}
         <View style={styles.addTaskButtonContainer}>
           <DropShadow style={styles.addTaskButtonDropShadow}>
             <Pressable
               style={({pressed}) => [
                 styles.addTaskButton,
                 {
-                  backgroundColor: pressed ? '#7b96ae' : '#43698c',
+                  borderColor: pressed ? '#7b96ae' : '#43698c',
                 },
               ]}
               onPress={this.showCreateTaskDialog}>
-              <MaterialCommunityIcons
-                name="plus-thick"
-                size={30}
-                color="white"
-              />
+              <MaterialCommunityIcons name="plus" size={30} color="#e8eaeb" />
             </Pressable>
           </DropShadow>
           {/*#region Create SubTask Dialog*/}
@@ -119,7 +110,7 @@ class SubTasks extends Component {
                 <TextInput
                   style={styles.dialogTextInput}
                   placeholder="Enter subtask name"
-                  placeholderTextColor="white"
+                  placeholderTextColor="#e8eaeb"
                   defaultValue=""
                   onChangeText={text => {
                     this.setState({newSubtaskName: text});
@@ -128,17 +119,28 @@ class SubTasks extends Component {
               </Dialog.Content>
               <Dialog.Actions>
                 <Pressable
+                  style={({pressed}) => [
+                    styles.dialogButton,
+                    {
+                      borderColor: pressed ? '#7b96ae' : '#43698c',
+                    },
+                  ]}
                   onPress={() => {
                     this.addNewSubtask();
                     this.hideCreateTaskDialog();
                   }}>
-                  <MaterialIcons name="add-circle" size={45} color="white" />
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={30}
+                    color="#e8eaeb"
+                  />
                 </Pressable>
               </Dialog.Actions>
             </Dialog>
           </Portal>
           {/*#endregion*/}
         </View>
+        {/*#endregion*/}
       </View>
     );
   }
@@ -146,6 +148,7 @@ class SubTasks extends Component {
 
 export default SubTasks;
 
+//#region styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -154,10 +157,11 @@ const styles = StyleSheet.create({
   },
   flatlistContainer: {
     height: appHeight * 0.9,
-    borderTopWidth: appHeight * 0.006,
-    borderTopColor: '#324e68',
-    borderBottomWidth: appHeight * 0.006,
-    borderBottomColor: '#324e68',
+    borderTopWidth: appHeight * 0.003,
+    borderTopColor: '#43698c',
+    borderBottomWidth: appHeight * 0.003,
+    borderBottomColor: '#43698c',
+    paddingBottom: appHeight * 0.005,
   },
   addTaskButtonContainer: {
     height: appHeight * 0.1,
@@ -165,8 +169,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addTaskButton: {
-    padding: appWidth * 0.02,
+    padding: appWidth * 0.018,
     borderRadius: 35,
+    borderWidth: 3,
   },
   addTaskButtonDropShadow: {
     shadowOpacity: 1,
@@ -182,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dialogTitle: {
-    color: 'white',
+    color: '#e8eaeb',
     alignSelf: 'center',
     fontSize: appWidth * 0.04,
     fontWeight: 'bold',
@@ -192,8 +197,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 25,
     borderColor: 'lightgrey',
-    color: 'white',
+    color: '#e8eaeb',
     width: appWidth * 0.5,
-    padding: appHeight * 0.01,
+    padding: appHeight * 0.02,
+  },
+  dialogButton: {
+    borderRadius: 30,
+    borderWidth: 4,
+    padding: appWidth * 0.01,
   },
 });
+//#endregion

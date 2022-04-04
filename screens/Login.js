@@ -1,9 +1,12 @@
+//#region imports
 import React, {Component} from 'react';
 import {Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {appWidth, appHeight} from '../assets/ScreenDimensions';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import DropShadow from 'react-native-drop-shadow';
+//#endregion
 
 class Login extends Component {
   constructor(props) {
@@ -15,6 +18,7 @@ class Login extends Component {
     password: '',
   };
 
+  //#region input validator
   validateInputFields = () => {
     if (this.state.username === '') {
       alert('Please enter your username');
@@ -25,48 +29,64 @@ class Login extends Component {
     }
     return true;
   };
+  //#endregion
 
   render() {
     return (
       <View style={styles.container}>
+        {/*#region username label and textinput*/}
         <Text style={styles.label}>Username</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Enter your username"
-          placeholderTextColor="white"
+          placeholderTextColor="#e8eaeb"
           defaultValue={this.state.username}
           onChangeText={inputUsername => {
             this.setState({username: inputUsername});
           }}
         />
+        {/*#endregion*/}
+        {/*#region password label and textinput*/}
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.textInput}
           placeholder="Enter your password"
-          placeholderTextColor="white"
+          placeholderTextColor="#e8eaeb"
           defaultValue={this.state.password}
           onChangeText={inputPassword => {
             this.setState({password: inputPassword});
           }}
         />
-        <Pressable
-          style={styles.loginButton}
-          onPress={() => {
-            if (this.validateInputFields()) {
-              if (
-                UserServices.loginUser(this.state.username, this.state.password)
-              ) {
-                this.props.navigation.navigate('UserTasks', {
-                  userID: UserServices.getUserID(this.state.username),
-                });
-              } else {
-                alert('Login Failed');
+        {/*#endregion*/}
+        {/*#region login button*/}
+        <DropShadow style={styles.loginButtonDropShadow}>
+          <Pressable
+            style={({pressed}) => [
+              styles.loginButton,
+              {
+                borderColor: pressed ? '#43698c' : 'lightgrey',
+              },
+            ]}
+            onPress={() => {
+              if (this.validateInputFields()) {
+                if (
+                  UserServices.loginUser(
+                    this.state.username,
+                    this.state.password,
+                  )
+                ) {
+                  this.props.navigation.navigate('UserTasks', {
+                    userID: UserServices.getUserID(this.state.username),
+                  });
+                } else {
+                  alert('Login Failed');
+                }
               }
-            }
-          }}>
-          <FontAwesome5 name="sign-in-alt" size={35} color="white" />
-          <Text style={styles.buttonText}>Sign in</Text>
-        </Pressable>
+            }}>
+            <FontAwesome5 name="sign-in-alt" size={28} color="#e8eaeb" />
+          </Pressable>
+        </DropShadow>
+        {/*#endregion*/}
       </View>
     );
   }
@@ -74,6 +94,7 @@ class Login extends Component {
 
 export default Login;
 
+//#region styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -87,7 +108,7 @@ const styles = StyleSheet.create({
     marginHorizontal: appWidth * 0.2,
     fontWeight: '700',
     fontSize: appWidth * 0.045,
-    color: 'white',
+    color: '#e8eaeb',
   },
   textInput: {
     borderWidth: 2,
@@ -97,15 +118,18 @@ const styles = StyleSheet.create({
     marginBottom: appHeight * 0.04,
     marginHorizontal: appWidth * 0.2,
     fontSize: appWidth * 0.035,
-    color: 'white',
+    color: '#e8eaeb',
   },
   loginButton: {
     alignSelf: 'center',
+    borderWidth: 3,
+    borderRadius: 25,
+    padding: appWidth * 0.021,
   },
-  buttonText: {
-    fontWeight: '800',
-    alignSelf: 'center',
-    color: 'white',
-    fontSize: appWidth * 0.035,
+  loginButtonDropShadow: {
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    shadowColor: 'black',
   },
 });
+//#endregion

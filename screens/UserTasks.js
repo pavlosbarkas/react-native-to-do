@@ -4,6 +4,7 @@ import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
 import CustomTaskRow from '../components/CustomTaskRow';
+import {appHeight, appWidth} from '../assets/ScreenDimensions';
 
 class UserTasks extends Component {
   constructor(props) {
@@ -74,13 +75,17 @@ class UserTasks extends Component {
           {/*#region Create Task Dialog*/}
           <Portal>
             <Dialog
+              style={styles.dialogContainer}
               visible={this.state.createTaskDialogVisible}
               onDismiss={this.hideCreateTaskDialog}>
-              <Dialog.Title>Create a new task</Dialog.Title>
+              <Dialog.Title style={styles.dialogTitle}>
+                Add a new task
+              </Dialog.Title>
               <Dialog.Content>
                 <TextInput
                   style={styles.dialogTextInput}
                   placeholder="Enter task name"
+                  placeholderTextColor="white"
                   defaultValue=""
                   onChangeText={text => {
                     this.setState({newTaskName: text});
@@ -94,7 +99,7 @@ class UserTasks extends Component {
                     this.addNewTask();
                     this.hideCreateTaskDialog();
                   }}>
-                  <Text style={styles.dialogButtonText}>Create</Text>
+                  <Text style={styles.dialogButtonText}>Add</Text>
                 </Pressable>
               </Dialog.Actions>
             </Dialog>
@@ -115,59 +120,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#192734',
   },
   flatlistContainer: {
-    flex: 8,
-    borderTopWidth: 7,
+    height: appHeight * 0.9,
+    borderTopWidth: appHeight * 0.006,
     borderTopColor: '#324e68',
-    borderBottomWidth: 7,
+    borderBottomWidth: appHeight * 0.006,
     borderBottomColor: '#324e68',
   },
-  flatlistRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-    borderBottomRightRadius: 18,
-    borderBottomLeftRadius: 18,
-  },
-  taskName: {
-    fontSize: 24,
-    lineHeight: 40,
-    padding: 20,
-    color: 'white',
-    fontWeight: '500',
-  },
   fabContainer: {
-    flex: 1,
+    height: appHeight * 0.1,
     justifyContent: 'center',
   },
   floatingButton: {
     alignSelf: 'center',
     backgroundColor: '#4b759c',
   },
-  dialogTextInput: {
-    borderWidth: 2,
+  dialogContainer: {
+    backgroundColor: '#192734',
+    borderRadius: 25,
+    height: appHeight * 0.32,
+    width: appWidth * 0.7,
+    alignSelf: 'center',
+    alignItems: 'center',
   },
-  dialogCreateTaskButton: {
-    backgroundColor: 'cyan',
-    borderWidth: 2,
-    borderColor: 'black',
-    borderRadius: 8,
-    padding: 7,
-  },
-  dialogButtonText: {
-    fontSize: 16,
+  dialogTitle: {
+    color: 'white',
+    alignSelf: 'center',
+    fontSize: appWidth * 0.04,
     fontWeight: 'bold',
   },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    lineHeight: 40,
-    padding: 10,
+  dialogTextInput: {
+    borderWidth: 2,
+    borderRadius: 25,
+    borderColor: 'lightgrey',
     color: 'white',
-    fontWeight: '400',
+    marginHorizontal: appWidth * 0.05,
+    padding: appHeight * 0.025,
   },
-  editTaskButton: {},
-  showSubtasksButton: {},
+  dialogCreateTaskButton: {
+    backgroundColor: '#324e68',
+    borderRadius: 25,
+  },
+  dialogButtonText: {
+    fontWeight: '800',
+    color: 'white',
+    fontSize: appWidth * 0.04,
+    padding: appHeight * 0.018,
+  },
 });

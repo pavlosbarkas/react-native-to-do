@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Pressable, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Dialog, Portal} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
@@ -14,13 +14,13 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
       <Text style={styles.taskName}>{item.name}</Text>
       <View style={styles.buttons}>
         {/*#region Edit Button*/}
-        <TouchableOpacity
+        <Pressable
           style={styles.editTaskButton}
           onPress={() => {
             setDialogVisible(true);
           }}>
           <Text style={styles.buttonText}>Edit</Text>
-        </TouchableOpacity>
+        </Pressable>
         {/*#endregion*/}
         {/*#region Edit Task Name Dialog*/}
         <Portal>
@@ -53,16 +53,16 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
         </Portal>
         {/*#endregion*/}
         {/*#region Delete Button*/}
-        <TouchableOpacity
+        <Pressable
           style={styles.editTaskButton}
           onPress={() => {
             deleteTask(item.id);
           }}>
           <Text style={styles.buttonText}>Delete</Text>
-        </TouchableOpacity>
+        </Pressable>
         {/*#endregion*/}
         {/*#region Subtasks Button*/}
-        <TouchableOpacity
+        <Pressable
           style={styles.showSubtasksButton}
           onPress={() => {
             navigation.navigate('Subtasks', {
@@ -70,7 +70,7 @@ const CustomTaskRow = ({item, renameTask, deleteTask}) => {
             });
           }}>
           <Text style={styles.buttonText}>Subtasks</Text>
-        </TouchableOpacity>
+        </Pressable>
         {/*#endregion*/}
       </View>
     </View>

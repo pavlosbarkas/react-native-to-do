@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Button, Pressable, Text, TextInput, View} from 'react-native';
+import {Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
+import {appWidth, appHeight} from '../assets/ScreenDimensions';
 
 class Login extends Component {
   constructor(props) {
@@ -79,33 +80,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    marginTop: 2,
-    marginBottom: 10,
-    marginHorizontal: 65,
-    fontSize: 20,
+    marginBottom: appHeight * 0.02,
+    marginTop: appHeight * 0.015,
+    marginHorizontal: appWidth * 0.2,
     fontWeight: '700',
+    fontSize: appWidth * 0.045,
     color: 'white',
   },
   textInput: {
     borderWidth: 2,
     borderColor: 'lightgrey',
-    borderRadius: 10,
-    padding: 20,
-    fontSize: 14,
-    marginBottom: 15,
-    marginHorizontal: 50,
+    borderRadius: 25,
+    padding: appHeight * 0.025,
+    marginBottom: appHeight * 0.04,
+    marginHorizontal: appWidth * 0.2,
+    fontSize: appWidth * 0.035,
     color: 'white',
   },
   loginButton: {
-    marginTop: 45,
     backgroundColor: '#324e68',
     alignSelf: 'center',
-    borderRadius: 40,
+    borderRadius: 25,
   },
   buttonText: {
     color: 'white',
-    fontSize: 22,
     fontWeight: '800',
-    padding: 26,
+    fontSize: appWidth * 0.045,
+    padding: appHeight * 0.02,
   },
 });

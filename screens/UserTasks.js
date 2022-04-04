@@ -5,6 +5,9 @@ import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
 import CustomTaskRow from '../components/CustomTaskRow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DropShadow from 'react-native-drop-shadow';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 class UserTasks extends Component {
   constructor(props) {
@@ -66,12 +69,23 @@ class UserTasks extends Component {
             }}
           />
         </View>
-        <View style={styles.fabContainer}>
-          <FAB
-            style={styles.floatingButton}
-            icon="plus"
-            onPress={this.showCreateTaskDialog}
-          />
+        <View style={styles.addTaskButtonContainer}>
+          <DropShadow style={styles.addTaskButtonDropShadow}>
+            <Pressable
+              style={({pressed}) => [
+                styles.addTaskButton,
+                {
+                  backgroundColor: pressed ? '#7b96ae' : '#43698c',
+                },
+              ]}
+              onPress={this.showCreateTaskDialog}>
+              <MaterialCommunityIcons
+                name="plus-thick"
+                size={30}
+                color="white"
+              />
+            </Pressable>
+          </DropShadow>
           {/*#region Create Task Dialog*/}
           <Portal>
             <Dialog
@@ -94,12 +108,11 @@ class UserTasks extends Component {
               </Dialog.Content>
               <Dialog.Actions>
                 <Pressable
-                  style={styles.dialogCreateTaskButton}
                   onPress={() => {
                     this.addNewTask();
                     this.hideCreateTaskDialog();
                   }}>
-                  <Text style={styles.dialogButtonText}>Add</Text>
+                  <MaterialIcons name="add-circle" size={45} color="white" />
                 </Pressable>
               </Dialog.Actions>
             </Dialog>
@@ -126,19 +139,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: appHeight * 0.006,
     borderBottomColor: '#324e68',
   },
-  fabContainer: {
+  addTaskButtonContainer: {
     height: appHeight * 0.1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  floatingButton: {
-    alignSelf: 'center',
-    backgroundColor: '#4b759c',
+  addTaskButton: {
+    padding: appWidth * 0.02,
+    borderRadius: 35,
+  },
+  addTaskButtonDropShadow: {
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    shadowColor: 'black',
   },
   dialogContainer: {
     backgroundColor: '#192734',
     borderRadius: 25,
     height: appHeight * 0.32,
-    width: appWidth * 0.7,
+    width: appWidth * 0.75,
     alignSelf: 'center',
     alignItems: 'center',
   },
@@ -147,23 +166,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: appWidth * 0.04,
     fontWeight: 'bold',
+    padding: appWidth * 0.01,
   },
   dialogTextInput: {
     borderWidth: 2,
     borderRadius: 25,
     borderColor: 'lightgrey',
     color: 'white',
-    marginHorizontal: appWidth * 0.05,
-    padding: appHeight * 0.025,
-  },
-  dialogCreateTaskButton: {
-    backgroundColor: '#324e68',
-    borderRadius: 25,
-  },
-  dialogButtonText: {
-    fontWeight: '800',
-    color: 'white',
-    fontSize: appWidth * 0.04,
-    padding: appHeight * 0.018,
+    width: appWidth * 0.5,
+    padding: appHeight * 0.01,
   },
 });

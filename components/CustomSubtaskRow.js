@@ -1,68 +1,40 @@
 import React, {useState} from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import {Dialog, Portal} from 'react-native-paper';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {appHeight, appWidth} from '../assets/ScreenDimensions';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import DropShadow from 'react-native-drop-shadow';
 
 const CustomSubtaskRow = ({item, renameSubTask, deleteSubTask}) => {
   let [dialogVisible, setDialogVisible] = useState(false);
   let [subTaskName, setSubTaskName] = useState(item.name);
 
-  /*const showEditTaskDialog = id => {
-    setCurrentTaskIDState(id);
-    setEditTaskDialogVisible(true);
-  };
-
-  const hideEditTaskDialog = () => setEditTaskDialogVisible(false);
-
-  const renameTask = () => {
-    let tempTasks = parentState.subtasks;
-    tempTasks.forEach(task => {
-      if (task.id === parentState.currentTaskID) {
-        task.name = newSubtaskName;
-      }
-    });
-    setSubtasksState(tempTasks);
-  };
-
-  const deleteTask = id => {
-    let tempTasks = parentState.subtasks;
-    tempTasks.forEach(task => {
-      if (task.id === id) {
-        tempTasks.splice(tempTasks.indexOf(task, 0), 1);
-      }
-    });
-    setSubtasksState(tempTasks);
-  };*/
-
   return (
     <View style={styles.flatlistRow}>
       <Text style={styles.taskName}>{item.name}</Text>
-      <View style={styles.buttons}>
+      <View style={styles.buttonsContainer}>
         {/*#region Edit Button*/}
-        <TouchableOpacity
-          style={styles.editTaskButton}
+        <Pressable
+          style={styles.editButton}
           onPress={() => {
             setDialogVisible(true);
           }}>
-          <Text style={styles.buttonText}>Edit</Text>
-        </TouchableOpacity>
+          <MaterialIcons name="edit" size={25} color="white" />
+        </Pressable>
         {/*#endregion*/}
         {/*#region Edit SubTask Name Dialog*/}
         <Portal>
           <Dialog
+            style={styles.dialogContainer}
             visible={dialogVisible}
             onDismiss={() => setDialogVisible(false)}>
-            <Dialog.Title>Edit task</Dialog.Title>
+            <Dialog.Title style={styles.dialogTitle}>Edit task</Dialog.Title>
             <Dialog.Content>
               <TextInput
                 style={styles.dialogTextInput}
                 placeholder="Enter new task name"
+                placeholderTextColor="white"
                 defaultValue=""
                 onChangeText={text => {
                   setSubTaskName(text);
@@ -71,26 +43,27 @@ const CustomSubtaskRow = ({item, renameSubTask, deleteSubTask}) => {
               />
             </Dialog.Content>
             <Dialog.Actions>
-              <Pressable
-                style={styles.dialogCreateTaskButton}
-                onPress={() => {
-                  renameSubTask({id: item.id, name: subTaskName});
-                  setDialogVisible(false);
-                }}>
-                <Text style={styles.dialogButtonText}>Confirm</Text>
-              </Pressable>
+              <DropShadow style={styles.confirmEditButtonDropShadow}>
+                <Pressable
+                  onPress={() => {
+                    renameSubTask({id: item.id, name: subTaskName});
+                    setDialogVisible(false);
+                  }}>
+                  <FontAwesome5 name="check-circle" size={40} color="white" />
+                </Pressable>
+              </DropShadow>
             </Dialog.Actions>
           </Dialog>
         </Portal>
         {/*#endregion*/}
         {/*#region Delete Button*/}
-        <TouchableOpacity
-          style={styles.editTaskButton}
+        <Pressable
+          style={styles.deleteButton}
           onPress={() => {
             deleteSubTask(item.id);
           }}>
-          <Text style={styles.buttonText}>Delete</Text>
-        </TouchableOpacity>
+          <MaterialIcons name="delete" size={28} color="white" />
+        </Pressable>
         {/*#endregion*/}
       </View>
     </View>
@@ -100,68 +73,63 @@ const CustomSubtaskRow = ({item, renameSubTask, deleteSubTask}) => {
 export default CustomSubtaskRow;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#192734',
-  },
-  flatlistContainer: {
-    flex: 8,
-    borderTopWidth: 7,
-    borderTopColor: '#324e68',
-    borderBottomWidth: 7,
-    borderBottomColor: '#324e68',
-  },
   flatlistRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
+    borderBottomWidth: 1.5,
     borderBottomColor: 'lightgrey',
-    borderBottomRightRadius: 18,
-    borderBottomLeftRadius: 18,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
   },
   taskName: {
-    flex: 1,
-    fontSize: 24,
-    lineHeight: 40,
-    padding: 20,
+    width: appWidth * 0.6,
+    fontSize: appWidth * 0.05,
+    lineHeight: appHeight * 0.07,
+    padding: appHeight * 0.028,
     color: 'white',
     fontWeight: '500',
   },
-  fabContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  buttonsContainer: {
+    width: appWidth * 0.4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
-  floatingButton: {
+  editButton: {
+    marginLeft: appWidth * 0.05,
+    marginRight: appWidth * 0.04,
+    padding: appWidth * 0.01,
+  },
+  deleteButton: {
+    marginRight: appWidth * 0.03,
+    padding: appWidth * 0.01,
+  },
+  dialogContainer: {
+    backgroundColor: '#192734',
+    borderRadius: 25,
+    height: appHeight * 0.32,
+    width: appWidth * 0.75,
     alignSelf: 'center',
-    backgroundColor: '#4b759c',
+    alignItems: 'center',
+  },
+  dialogTitle: {
+    color: 'white',
+    alignSelf: 'center',
+    fontSize: appWidth * 0.04,
+    fontWeight: 'bold',
   },
   dialogTextInput: {
     borderWidth: 2,
-  },
-  dialogCreateTaskButton: {
-    backgroundColor: 'cyan',
-    borderWidth: 2,
-    borderColor: 'black',
-    borderRadius: 8,
-    padding: 7,
-  },
-  dialogButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    lineHeight: 40,
-    padding: 10,
+    borderRadius: 25,
+    borderColor: 'lightgrey',
     color: 'white',
-    fontWeight: '400',
+    width: appWidth * 0.5,
+    padding: appHeight * 0.02,
   },
-  editTaskButton: {},
-  showSubtasksButton: {},
+  confirmEditButtonDropShadow: {
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    shadowColor: '#6887a3',
+    shadowOffset: {
+      height: 2,
+      width: 2,
+    },
+  },
 });

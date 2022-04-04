@@ -3,6 +3,7 @@ import {Pressable, Text, TextInput, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 import * as UserServices from '../services/UserServices';
 import {appWidth, appHeight} from '../assets/ScreenDimensions';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 class Login extends Component {
   constructor(props) {
@@ -63,7 +64,8 @@ class Login extends Component {
               }
             }
           }}>
-          <Text style={styles.buttonText}>Login</Text>
+          <FontAwesome5 name="sign-in-alt" size={35} color="white" />
+          <Text style={styles.buttonText}>Sign in</Text>
         </Pressable>
       </View>
     );
@@ -98,14 +100,12 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   loginButton: {
-    backgroundColor: '#324e68',
     alignSelf: 'center',
-    borderRadius: 25,
   },
   buttonText: {
-    color: 'white',
     fontWeight: '800',
-    fontSize: appWidth * 0.045,
-    padding: appHeight * 0.02,
+    alignSelf: 'center',
+    color: 'white',
+    fontSize: appWidth * 0.035,
   },
 });

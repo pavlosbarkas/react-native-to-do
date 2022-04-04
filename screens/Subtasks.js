@@ -10,6 +10,10 @@ import {
 import * as UserServices from '../services/UserServices';
 import {FAB, Portal, Dialog} from 'react-native-paper';
 import CustomSubtaskRow from '../components/CustomSubtaskRow';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DropShadow from 'react-native-drop-shadow';
+import {appHeight, appWidth} from '../assets/ScreenDimensions';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 class SubTasks extends Component {
   constructor(props) {
@@ -85,22 +89,37 @@ class SubTasks extends Component {
             }}
           />
         </View>
-        <View style={styles.fabContainer}>
-          <FAB
-            style={styles.floatingButton}
-            icon="plus"
-            onPress={this.showCreateTaskDialog}
-          />
+        <View style={styles.addTaskButtonContainer}>
+          <DropShadow style={styles.addTaskButtonDropShadow}>
+            <Pressable
+              style={({pressed}) => [
+                styles.addTaskButton,
+                {
+                  backgroundColor: pressed ? '#7b96ae' : '#43698c',
+                },
+              ]}
+              onPress={this.showCreateTaskDialog}>
+              <MaterialCommunityIcons
+                name="plus-thick"
+                size={30}
+                color="white"
+              />
+            </Pressable>
+          </DropShadow>
           {/*#region Create SubTask Dialog*/}
           <Portal>
             <Dialog
+              style={styles.dialogContainer}
               visible={this.state.createTaskDialogVisible}
               onDismiss={this.hideCreateTaskDialog}>
-              <Dialog.Title>Create a new subtask</Dialog.Title>
+              <Dialog.Title style={styles.dialogTitle}>
+                Add a new subtask
+              </Dialog.Title>
               <Dialog.Content>
                 <TextInput
                   style={styles.dialogTextInput}
                   placeholder="Enter subtask name"
+                  placeholderTextColor="white"
                   defaultValue=""
                   onChangeText={text => {
                     this.setState({newSubtaskName: text});
@@ -109,12 +128,11 @@ class SubTasks extends Component {
               </Dialog.Content>
               <Dialog.Actions>
                 <Pressable
-                  style={styles.dialogCreateTaskButton}
                   onPress={() => {
                     this.addNewSubtask();
                     this.hideCreateTaskDialog();
                   }}>
-                  <Text style={styles.dialogButtonText}>Create</Text>
+                  <MaterialIcons name="add-circle" size={45} color="white" />
                 </Pressable>
               </Dialog.Actions>
             </Dialog>
@@ -135,59 +153,47 @@ const styles = StyleSheet.create({
     backgroundColor: '#192734',
   },
   flatlistContainer: {
-    flex: 8,
-    borderTopWidth: 7,
+    height: appHeight * 0.9,
+    borderTopWidth: appHeight * 0.006,
     borderTopColor: '#324e68',
-    borderBottomWidth: 7,
+    borderBottomWidth: appHeight * 0.006,
     borderBottomColor: '#324e68',
   },
-  flatlistRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-    borderBottomRightRadius: 18,
-    borderBottomLeftRadius: 18,
-  },
-  taskName: {
-    fontSize: 24,
-    lineHeight: 40,
-    padding: 20,
-    color: 'white',
-    fontWeight: '500',
-  },
-  fabContainer: {
-    flex: 1,
+  addTaskButtonContainer: {
+    height: appHeight * 0.1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  floatingButton: {
+  addTaskButton: {
+    padding: appWidth * 0.02,
+    borderRadius: 35,
+  },
+  addTaskButtonDropShadow: {
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    shadowColor: 'black',
+  },
+  dialogContainer: {
+    backgroundColor: '#192734',
+    borderRadius: 25,
+    height: appHeight * 0.32,
+    width: appWidth * 0.75,
     alignSelf: 'center',
-    backgroundColor: '#4b759c',
+    alignItems: 'center',
+  },
+  dialogTitle: {
+    color: 'white',
+    alignSelf: 'center',
+    fontSize: appWidth * 0.04,
+    fontWeight: 'bold',
+    padding: appWidth * 0.01,
   },
   dialogTextInput: {
     borderWidth: 2,
-  },
-  dialogCreateTaskButton: {
-    backgroundColor: 'cyan',
-    borderWidth: 2,
-    borderColor: 'black',
-    borderRadius: 8,
-    padding: 7,
-  },
-  dialogButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    lineHeight: 40,
-    padding: 10,
+    borderRadius: 25,
+    borderColor: 'lightgrey',
     color: 'white',
-    fontWeight: '400',
+    width: appWidth * 0.5,
+    padding: appHeight * 0.01,
   },
-  editTaskButton: {},
-  showSubtasksButton: {},
 });

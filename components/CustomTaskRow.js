@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   dialogContainer: {
     backgroundColor: '#192734',
     borderRadius: 25,
-    height: appHeight * 0.32,
+    height: appHeight * 0.33,
     width: appWidth * 0.75,
     alignSelf: 'center',
     alignItems: 'center',

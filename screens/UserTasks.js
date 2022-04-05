@@ -8,6 +8,8 @@ import CustomTaskRow from '../components/CustomTaskRow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropShadow from 'react-native-drop-shadow';
+import {connect} from 'react-redux';
+import {setLoading, setTasks} from '../redux/actions/actions';
 //#endregion
 
 class UserTasks extends Component {
@@ -16,15 +18,14 @@ class UserTasks extends Component {
   }
 
   state = {
-    userTasks: [],
     createTaskDialogVisible: false,
     newTaskName: '',
   };
 
   componentDidMount() {
-    this.setState({
-      userTasks: UserServices.getUserTasks(this.props.route.params.userID),
-    });
+    this.props.setTasks(
+      UserServices.getUserTasks(this.props.route.params.userID),
+    );
   }
 
   //#region helper functions to show or hide the dialog to create a task
@@ -34,24 +35,24 @@ class UserTasks extends Component {
 
   //#region add, delete and rename task functions triggered on buttons press
   addNewTask = () => {
-    let newUserTasks = [...this.state.userTasks];
+    let newUserTasks = [...this.props.actions.userTasks];
     newUserTasks.push({
       name: this.state.newTaskName,
-      id: this.state.userTasks.length + 2,
+      id: newUserTasks.length + 3,
     });
-    this.setState({userTasks: newUserTasks});
+    this.props.setTasks(newUserTasks);
   };
 
   deleteTask = id => {
-    let userTasks = this.state.userTasks.filter(task => task.id !== id);
-    this.setState({userTasks});
+    let userTasks = this.props.actions.userTasks.filter(task => task.id !== id);
+    this.props.setTasks(userTasks);
   };
 
   renameTask = task => {
-    const userTasks = [...this.state.userTasks];
+    const userTasks = [...this.props.actions.userTasks];
     let newTask = userTasks.find(item => item.id === task.id);
     newTask.name = task.name;
-    this.setState({userTasks});
+    this.props.setTasks(userTasks);
   };
   //#endregion
 
@@ -61,7 +62,7 @@ class UserTasks extends Component {
         {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList
-            data={this.state.userTasks}
+            data={this.props.actions.userTasks}
             keyExtractor={item => item.id}
             renderItem={({item}) => {
               return (
@@ -138,7 +139,20 @@ class UserTasks extends Component {
   }
 }
 
-export default UserTasks;
+const mapStateToProps = state => {
+  return {
+    //actionsReducer in store.js
+    actions: state.actions,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setTasks: value => dispatch(setTasks(value)),
+    setLoading: value => dispatch(setLoading(value)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserTasks);
 
 //#region styles
 const styles = StyleSheet.create({

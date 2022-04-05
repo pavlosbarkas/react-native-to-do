@@ -8,6 +8,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import DropShadow from 'react-native-drop-shadow';
+import {deleteTask} from '../redux/actions/actions';
+import {connect} from 'react-redux';
 //#endregion
 
 const CustomTaskRow = ({item, renameTask, deleteTask}) => {

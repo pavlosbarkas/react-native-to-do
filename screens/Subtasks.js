@@ -14,6 +14,8 @@ import CustomSubtaskRow from '../components/CustomSubtaskRow';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropShadow from 'react-native-drop-shadow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
+import {connect} from 'react-redux';
+import {setLoading, setSubtasks, setTasks} from '../redux/actions/actions';
 //#endregion
 
 class SubTasks extends Component {
@@ -22,17 +24,14 @@ class SubTasks extends Component {
   }
 
   state = {
-    subtasks: [],
     createTaskDialogVisible: false,
-    editTaskDialogVisible: false,
-    currentTaskID: null,
     newSubtaskName: '',
   };
 
   componentDidMount() {
-    this.setState({
-      subtasks: UserServices.getSubtasks(this.props.route.params.taskID),
-    });
+    this.props.setSubtasks(
+      UserServices.getSubtasks(this.props.route.params.taskID),
+    );
   }
 
   //#region helper functions to show or hide the dialog to create a task
@@ -42,24 +41,24 @@ class SubTasks extends Component {
 
   //#region add, delete and rename subtask functions triggered on buttons press
   addNewSubtask = () => {
-    let newSubtasks = [...this.state.subtasks];
+    let newSubtasks = [...this.props.actions.subtasks];
     newSubtasks.push({
       name: this.state.newSubtaskName,
-      id: newSubtasks.length + 2,
+      id: newSubtasks.length + 3,
     });
-    this.setState({subtasks: newSubtasks});
+    this.props.setSubtasks(newSubtasks);
   };
 
   deleteSubTask = id => {
-    let subtasks = this.state.subtasks.filter(task => task.id !== id);
-    this.setState({subtasks});
+    let subtasks = this.props.actions.subtasks.filter(task => task.id !== id);
+    this.props.setSubtasks(subtasks);
   };
 
   renameSubTask = task => {
-    const subtasks = [...this.state.subtasks];
+    const subtasks = [...this.props.actions.subtasks];
     let newTask = subtasks.find(item => item.id === task.id);
     newTask.name = task.name;
-    this.setState({subtasks});
+    this.props.setSubtasks(subtasks);
   };
   //#endregion
 
@@ -69,7 +68,7 @@ class SubTasks extends Component {
         {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList
-            data={this.state.subtasks}
+            data={this.props.actions.subtasks}
             keyExtractor={item => item.id}
             renderItem={({item}) => {
               return (
@@ -146,7 +145,20 @@ class SubTasks extends Component {
   }
 }
 
-export default SubTasks;
+const mapStateToProps = state => {
+  return {
+    //actionsReducer in store.js
+    actions: state.actions,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setSubtasks: value => dispatch(setSubtasks(value)),
+    setLoading: value => dispatch(setLoading(value)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubTasks);
 
 //#region styles
 const styles = StyleSheet.create({

@@ -7,6 +7,8 @@ import {appWidth, appHeight} from '../assets/ScreenDimensions';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import DropShadow from 'react-native-drop-shadow';
 import {Modal, Portal} from 'react-native-paper';
+import {setLoading, setTasks} from '../redux/actions/actions';
+import {connect} from 'react-redux';
 //#endregion
 
 class Login extends Component {
@@ -22,7 +24,7 @@ class Login extends Component {
     isModalVisible: false,
   };
 
-  //#region input validator
+  //#region input validators
   checkUsername = value => {
     this.state.username === ''
       ? this.setState({isUsernameInserted: false})
@@ -33,6 +35,18 @@ class Login extends Component {
     this.state.password === ''
       ? this.setState({isPasswordInserted: false})
       : this.setState({isPasswordInserted: true});
+  };
+  //#endregion
+
+  //#region loginOnPress
+  loginOnPress = () => {
+    if (UserServices.loginUser(this.state.username, this.state.password)) {
+      this.props.navigation.navigate('UserTasks', {
+        userID: UserServices.getUserID(this.state.username),
+      });
+    } else {
+      this.setState({isModalVisible: true});
+    }
   };
   //#endregion
 
@@ -80,17 +94,7 @@ class Login extends Component {
                 borderColor: pressed ? '#43698c' : 'lightgrey',
               },
             ]}
-            onPress={() => {
-              if (
-                UserServices.loginUser(this.state.username, this.state.password)
-              ) {
-                this.props.navigation.navigate('UserTasks', {
-                  userID: UserServices.getUserID(this.state.username),
-                });
-              } else {
-                this.setState({isModalVisible: true});
-              }
-            }}>
+            onPress={this.loginOnPress}>
             <FontAwesome5 name="sign-in-alt" size={28} color="#e8eaeb" />
           </Pressable>
         </DropShadow>
@@ -123,7 +127,20 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => {
+  return {
+    //actionsReducer in store.js
+    actions: state.actions,
+  };
+};
+const mapDispatchToProps = dispatch => {
+  return {
+    setTasks: value => dispatch(setTasks(value)),
+    setLoading: value => dispatch(setLoading(value)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 //#region styles
 const styles = StyleSheet.create({

@@ -16,6 +16,7 @@ import DropShadow from 'react-native-drop-shadow';
 import {appHeight, appWidth} from '../assets/ScreenDimensions';
 import {connect} from 'react-redux';
 import {setLoading, setSubtasks, setTasks} from '../redux/actions/actions';
+import Loader from '../components/Loader';
 //#endregion
 
 class SubTasks extends Component {
@@ -29,9 +30,13 @@ class SubTasks extends Component {
   };
 
   componentDidMount() {
-    this.props.setSubtasks(
-      UserServices.getSubtasks(this.props.route.params.taskID),
-    );
+    this.props.setLoading(true);
+    setTimeout(() => {
+      this.props.setSubtasks(
+        UserServices.getSubtasks(this.props.route.params.taskID),
+      );
+      this.props.setLoading(false);
+    }, 2000);
   }
 
   //#region helper functions to show or hide the dialog to create a task
@@ -65,6 +70,7 @@ class SubTasks extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Loader width="1" height="1" />
         {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList

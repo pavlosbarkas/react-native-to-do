@@ -10,6 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import DropShadow from 'react-native-drop-shadow';
 import {connect} from 'react-redux';
 import {setLoading, setTasks} from '../redux/actions/actions';
+import Loader from '../components/Loader';
 //#endregion
 
 class UserTasks extends Component {
@@ -23,9 +24,13 @@ class UserTasks extends Component {
   };
 
   componentDidMount() {
-    this.props.setTasks(
-      UserServices.getUserTasks(this.props.route.params.userID),
-    );
+    this.props.setLoading(true);
+    setTimeout(() => {
+      this.props.setTasks(
+        UserServices.getUserTasks(this.props.route.params.userID),
+      );
+      this.props.setLoading(false);
+    }, 2000);
   }
 
   //#region helper functions to show or hide the dialog to create a task
@@ -59,6 +64,7 @@ class UserTasks extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Loader width="1" height="1" />
         {/*#region flatlist container*/}
         <View style={styles.flatlistContainer}>
           <FlatList

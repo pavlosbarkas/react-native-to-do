@@ -9,6 +9,7 @@ import DropShadow from 'react-native-drop-shadow';
 import {Modal, Portal} from 'react-native-paper';
 import {setLoading, setTasks} from '../redux/actions/actions';
 import {connect} from 'react-redux';
+import Loader from '../components/Loader';
 //#endregion
 
 class Login extends Component {
@@ -22,6 +23,7 @@ class Login extends Component {
     isUsernameInserted: true,
     isPasswordInserted: true,
     isModalVisible: false,
+    isLoadingModalVisible: false,
   };
 
   //#region input validators
@@ -40,13 +42,27 @@ class Login extends Component {
 
   //#region loginOnPress
   loginOnPress = () => {
-    if (UserServices.loginUser(this.state.username, this.state.password)) {
+    this.setState({isLoadingModalVisible: true});
+    this.props.setLoading(true);
+    setTimeout(() => {
+      if (UserServices.loginUser(this.state.username, this.state.password)) {
+        this.props.setLoading(false);
+        this.setState({isLoadingModalVisible: false});
+        this.props.navigation.navigate('UserTasks', {
+          userID: UserServices.getUserID(this.state.username),
+        });
+      } else {
+        this.setState({isLoadingModalVisible: false});
+        this.setState({isModalVisible: true});
+      }
+    }, 2000);
+    /*if (UserServices.loginUser(this.state.username, this.state.password)) {
       this.props.navigation.navigate('UserTasks', {
         userID: UserServices.getUserID(this.state.username),
       });
     } else {
       this.setState({isModalVisible: true});
-    }
+    }*/
   };
   //#endregion
 
@@ -98,6 +114,16 @@ class Login extends Component {
             <FontAwesome5 name="sign-in-alt" size={28} color="#e8eaeb" />
           </Pressable>
         </DropShadow>
+        {/*#endregion*/}
+        {/*#region Modal for login loading*/}
+        <Portal>
+          <Modal
+            visible={this.state.isLoadingModalVisible}
+            onDismiss={() => this.setState({isLoadingModalVisible: false})}
+            contentContainerStyle={styles.modalContainer}>
+            <Loader width="0.6" height="0.25" />
+          </Modal>
+        </Portal>
         {/*#endregion*/}
         {/*#region Modal for login failure*/}
         <Portal>
